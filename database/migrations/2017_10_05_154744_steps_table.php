@@ -18,6 +18,7 @@ class StepsTable extends Migration
             $table->timestamps();
             $table->integer('game_id')->nullable()->unsigned();
             $table->foreign('game_id')->references('id')->on('games');
+            $table->enum('who', array('pc','user'));
             $table->text('step');
 
         });

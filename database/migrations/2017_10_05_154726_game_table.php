@@ -18,7 +18,7 @@ class GameTable extends Migration
             $table->timestamps();
             $table->integer('session_id')->nullable()->unsigned();
             $table->foreign('session_id')->references('id')->on('sessions');
-            $table->enum('win', array('pc','user'));
+            $table->enum('win', array('pc','user','draw'))->nullable();
         });
     }
 

@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Games\SessionUserUnique;
+use App\Http\Games\DBStorage;
 use App\Http\Games\TicTacToe;
 
 class GameController extends Controller
 {
     //
 
+    public function __construct()
+    {
+        TicTacToe::set_unique_user_obj(new SessionUserUnique());
+        TicTacToe::set_storage_obj(new DBStorage());
+    }
     /**
      * Start new game.
      *

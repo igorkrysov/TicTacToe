@@ -61,12 +61,12 @@ class DBStorage implements Storage
         return true;
     }
 
-    public function add_step($game_id, $step)
+    public function add_step($game_id, $step, $who)
     {
         $step_ = new Steps();
         $step_->step = $step;
         $step_->game_id = $game_id;
-        $step_->who = "user";
+        $step_->who = $who;
         $step_->save();
     }
 

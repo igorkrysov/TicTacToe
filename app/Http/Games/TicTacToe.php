@@ -3,9 +3,6 @@
 namespace App\Http\Games;
 
 use Illuminate\Http\Request;
-use App\Sessions;
-use App\Games;
-use App\Steps;
 
 class TicTacToe
 {
@@ -29,27 +26,9 @@ class TicTacToe
      */
     public static function new_game()
     {
-        //$session_id = session()->getId();
         $unique = self::$unique_user_obj->get_unique_user();
-
         $user_id = self::$storage_obj->get_id_user($unique);
-
         $game_id = self::$storage_obj->new_game($user_id);
-
-        // if (Sessions::where('session', $session_id)->count() == 0) {
-        //     $session = new Sessions();
-        //     $session->session = $session_id;
-        //     $session->save();
-        //
-        //     $id = $session->id;
-        // } else {
-        //     $session = Sessions::where('session', $session_id)->take(1)->get();
-        //     $id = $session[0]->id;
-        // }
-
-        // $game = new Games();
-        // $game->session_id = $id;
-        // $game->save();
 
         return response()->json(['game_id' => $game_id]);
     }
@@ -62,11 +41,6 @@ class TicTacToe
      */
     public static function get_list_win($who)
     {
-        //$session_id = session()->getId();
-        // $session_id = self::$unique_user_obj->get_unique_user();
-        // $session = Sessions::where('session', $session_id)->take(1)->get();
-        // $id = $session[0]->id;
-
         $unique = self::$unique_user_obj->get_unique_user();
         $user_id = self::$storage_obj->get_id_user($unique);
         $result = self::$storage_obj->get_list_win($who, $user_id);
@@ -102,22 +76,8 @@ class TicTacToe
      */
     public static function get_count_win()
     {
-        //$session_id = session()->getId();
-
         $unique = self::$unique_user_obj->get_unique_user();
         $user_id = self::$storage_obj->get_id_user($unique);
-
-        // $session_id = self::$unique_user_obj->get_unique_user();
-        // $session = Sessions::where('session', $session_id)->take(1)->get();
-        // if (isset($session[0]->id)) {
-        //     $id = $session[0]->id;
-        //
-        //     $count_pc = Games::where('win', 'pc')->where('session_id', $id)->count();
-        //     $count_user = Games::where('win', 'user')->where('session_id', $id)->count();
-        // } else {
-        //     $count_pc = 0;
-        //     $count_user = 0;
-        // }
         $count_pc = self::$storage_obj->get_count_win($user_id, 'pc');
         $count_user = self::$storage_obj->get_count_win($user_id, 'user');
 
@@ -135,7 +95,7 @@ class TicTacToe
     public static function step_user(Request $request)
     {
         if (!self::$storage_obj->is_exist_step($request->input("game_id"), $request->input("step"))) {
-            self::$storage_obj->add_step($request->input("game_id"), $request->input("step"));
+            self::$storage_obj->add_step($request->input("game_id"), $request->input("step"), 'user');
 
             if (self::check_win($request->input("game_id")) == 'user') {
                 (new self)->set_win('user', $request->input("game_id"));
@@ -294,20 +254,12 @@ class TicTacToe
                 }
             }
         }
-
-        //print_r($fake_matrix);
-
         $max_i++;
         $max_j++;
 
-
         $max_i = str_replace([1,2,3], ['a','b','c'], $max_i);
 
-        $step = new Steps();
-        $step->step = $max_i."-".$max_j;
-        $step->game_id = $game_id;
-        $step->who = "pc";
-        $step->save();
+        self::$storage_obj->add_step($game_id, $max_i."-".$max_j, 'pc');
 
         if ((new self)->check_win($game_id) == 'pc') {
             (new self)->set_win('pc', $game_id);

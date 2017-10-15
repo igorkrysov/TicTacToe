@@ -50,9 +50,10 @@ interface Storage
     /**
      * @param  int $game_id
      * @param  string $step
+     * @param  string $who = user or pc
      * Method add step to Storage
      */
-    public function add_step($game_id, $step);
+    public function add_step($game_id, $step, $who);
 
     /**
      * @param  int $game_id
